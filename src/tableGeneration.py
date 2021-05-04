@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from pathlib import Path
 import pandas as pd
 import math
 
@@ -48,6 +49,7 @@ def generateSymbolInformationTable(S1History):
     dfTable.to_csv("..\\results\\symbolInformationTable.csv", index=False, header=True)
 
 def generateAllTables(S1History):
+    Path("..\\results").mkdir(parents=True, exist_ok=True)
     generateAddressTable(S1History)
     generateEntropyTable(S1History)
     generateProtocolProbabilityTable(S1History)
