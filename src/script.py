@@ -4,7 +4,9 @@ import atexit
 from tableGeneration import *
 
 S1History = []
+S2History = []
 S1 = {}
+S2 = {}
 totalPackets = 0
 startTime = time.asctime( time.localtime(time.time()) )
 lastSnapshot = 0.0
@@ -43,15 +45,22 @@ def callback(pkt):
 
         totalPackets += 1
 
+        if proto == 0x806:
+            src = pkt[Ether].src
+            if src not in S2:
+                S2[src] = 0.0
+            S2[src] += 1.0
+            print("ARP Received!")
+            
     deltaTime = (time.time()-lastSnapshot)
     if deltaTime > SECONDS_SNAPSHOT:
-        mostrar_fuente(S1)
+       # mostrar_fuente(S1)
         S1History.append(S1.copy())
+        S2History.append(S2.copy())
         lastSnapshot = time.time()
-
 sniff(prn=callback)
 
 def exit_handler():
-    generateAllTables(S1History)
+    generateAllTables(S1History,S2History)
 
 atexit.register(exit_handler)

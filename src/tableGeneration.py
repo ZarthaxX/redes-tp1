@@ -48,9 +48,16 @@ def generateSymbolInformationTable(S1History):
     dfTable = pd.DataFrame(rows, columns=cols)
     dfTable.to_csv("..\\results\\symbolInformationTable.csv", index=False, header=True)
 
-def generateAllTables(S1History):
+def generateHostTable(S2History):
+    cols = S2History[-1].keys()
+    rows = [[S2[mac] if mac in S2 else 0 for mac in cols] for S2 in S2History]
+    dfTable = pd.DataFrame(rows, columns=cols)
+    dfTable.to_csv("..\\results\\hostTable.csv", index=False, header=True)
+
+def generateAllTables(S1History,S2History):
     Path("..\\results").mkdir(parents=True, exist_ok=True)
     generateAddressTable(S1History)
     generateEntropyTable(S1History)
     generateProtocolProbabilityTable(S1History)
     generateSymbolInformationTable(S1History)
+    generateHostTable(S2History)
