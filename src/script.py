@@ -5,12 +5,14 @@ from tableGeneration import *
 
 S1History = []
 S2History = []
+S3History = []
 S1 = {}
 S2 = {}
+S3 = {}
 totalPackets = 0
 startTime = time.asctime( time.localtime(time.time()) )
 lastSnapshot = 0.0
-SECONDS_SNAPSHOT = 0.2
+SECONDS_SNAPSHOT = 10
 
 def mostrar_fuente(S):
     print(f"Time: {startTime}")
@@ -46,21 +48,30 @@ def callback(pkt):
         totalPackets += 1
 
         if proto == 0x806:
-            src = pkt[Ether].src
+            src = pkt[ARP].psrc
             if src not in S2:
                 S2[src] = 0.0
             S2[src] += 1.0
-            print("ARP Received!")
+            dst = pkt[ARP].pdst
+            if dst not in S3:
+                S3[dst] = 0.0
+            S3[dst] += 1.0
             
     deltaTime = (time.time()-lastSnapshot)
     if deltaTime > SECONDS_SNAPSHOT:
-       # mostrar_fuente(S1)
+        mostrar_fuente(S1)
+        print("OPCIONAL")
+        print("Src")
+        print(''.join([f"ARP from src {ip}: {S2[ip]}\n" for ip in S2]))
+        print("Dst")
+        print(''.join([f"ARP to dst {ip}: {S3[ip]}\n" for ip in S3]))
         S1History.append(S1.copy())
         S2History.append(S2.copy())
+        S3History.append(S3.copy())
         lastSnapshot = time.time()
 sniff(prn=callback)
 
 def exit_handler():
-    generateAllTables(S1History,S2History)
+    generateAllTables(S1History,S2History,S3History)
 
 atexit.register(exit_handler)

@@ -48,16 +48,23 @@ def generateSymbolInformationTable(S1History):
     dfTable = pd.DataFrame(rows, columns=cols)
     dfTable.to_csv("..\\results\\symbolInformationTable.csv", index=False, header=True)
 
-def generateHostTable(S2History):
+def generateHostSrcTable(S2History):
     cols = S2History[-1].keys()
-    rows = [[S2[mac] if mac in S2 else 0 for mac in cols] for S2 in S2History]
+    rows = [[S2[ip] if ip in S2 else 0 for ip in cols] for S2 in S2History]
     dfTable = pd.DataFrame(rows, columns=cols)
-    dfTable.to_csv("..\\results\\hostTable.csv", index=False, header=True)
+    dfTable.to_csv("..\\results\\hostSrcTable.csv", index=False, header=True)
 
-def generateAllTables(S1History,S2History):
+def generateHostDstTable(S3History):
+    cols = S3History[-1].keys()
+    rows = [[S3[ip] if ip in S3 else 0 for ip in cols] for S3 in S3History]
+    dfTable = pd.DataFrame(rows, columns=cols)
+    dfTable.to_csv("..\\results\\hostDstTable.csv", index=False, header=True)
+
+def generateAllTables(S1History,S2History,S3History):
     Path("..\\results").mkdir(parents=True, exist_ok=True)
     generateAddressTable(S1History)
     generateEntropyTable(S1History)
     generateProtocolProbabilityTable(S1History)
     generateSymbolInformationTable(S1History)
-    generateHostTable(S2History)
+    generateHostSrcTable(S2History)
+    generateHostDstTable(S3History)
